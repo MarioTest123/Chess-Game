@@ -107,9 +107,9 @@ button{font-family:inherit; cursor:pointer; border:none; background:none; color:
 .install b{color:var(--coin);}
 
 /* ============ GAME ============ */
-#game{position:absolute; inset:0; display:none; padding:14px;}
+#game{position:absolute; inset:0; display:none; overflow:auto; -webkit-overflow-scrolling:touch;}
 #game.show{display:flex;}
-.game-wrap{display:flex; gap:18px; width:100%; height:100%; align-items:center; justify-content:center;}
+.game-wrap{margin:auto; display:flex; gap:16px; width:100%; align-items:center; justify-content:center; padding:14px; box-sizing:border-box;}
 .board-area{display:flex; align-items:center; justify-content:center; flex:none;}
 .board{position:relative; width:var(--bs); height:var(--bs); border-radius:8px; overflow:hidden;
   border:7px solid var(--pipe-d); box-shadow:0 0 0 5px var(--ink), 10px 12px 0 rgba(58,42,22,.35); touch-action:none;}
@@ -186,6 +186,14 @@ button{font-family:inherit; cursor:pointer; border:none; background:none; color:
   .panel{width:var(--bs); max-width:96vw;}
   .panel .coach .small{display:none;}
 }
+@media (max-width:480px){
+  .game-wrap{gap:10px;}
+  .coach{padding:10px;} .coach .big{font-size:.7rem;} .coach .face{font-size:2rem;}
+  .ctrl{font-size:.55rem; padding:11px 4px;}
+  .icon-btn{font-size:.5rem; padding:9px 8px;}
+  .mode-pill{font-size:.45rem; padding:7px 8px;}
+  .tray-pieces{font-size:1.2rem;} .tray{min-height:28px;}
+}
 
 /* ============ OVERLAYS ============ */
 .overlay{position:absolute; inset:0; background:rgba(58,42,22,.6); display:none; align-items:center; justify-content:center; z-index:50; padding:18px;}
@@ -253,7 +261,7 @@ button{font-family:inherit; cursor:pointer; border:none; background:none; color:
         <b>Put it on the iPad like a real game:</b> open this page in Safari, tap the <b>Share</b> button, then <b>&ldquo;Add to Home Screen.&rdquo;</b> It opens full-screen and works even without internet.
       </div>
 
-      <div style="text-align:center; color:#fff; font-weight:800; opacity:.85; text-shadow:1px 1px 0 var(--ink); letter-spacing:1px;">CHESS QUEST &middot; v4 &middot; iphone color fix</div>
+      <div style="text-align:center; color:#fff; font-weight:800; opacity:.85; text-shadow:1px 1px 0 var(--ink); letter-spacing:1px;">CHESS QUEST &middot; v5 &middot; fits any screen</div>
     </div>
   </div>
 
@@ -897,17 +905,18 @@ function layout(){
   const landscape = vw>vh;
   let bs;
   if(landscape){
-    const panelW=Math.min(360, vw*0.38)+18+28; // panel + gap + padding
-    bs=Math.min(vh-28, vw-panelW);
+    const panelW=Math.min(360, vw*0.36)+16+28; // panel + gap + padding
+    bs=Math.min(vh-24, vw-panelW);
   }else{
-    const panelH=320; // approx panel block height
-    bs=Math.min(vw-28, vh-panelH);
+    // portrait: board takes the top; panel flows below (and can scroll if needed)
+    bs=Math.min(vw-24, vh*0.58);
   }
-  bs=Math.max(260, bs);
+  bs=Math.max(200, Math.min(bs, 760));
   document.documentElement.style.setProperty('--bs', bs+'px');
 }
 window.addEventListener('resize',()=>{ layout(); });
 window.addEventListener('orientationchange',()=>{ setTimeout(layout,200); });
+if(window.visualViewport){ window.visualViewport.addEventListener('resize', layout); }
 
 /* prevent iOS pinch/double-tap zoom & rubber-band on the app */
 document.addEventListener('gesturestart',e=>e.preventDefault());
