@@ -137,12 +137,15 @@ button{font-family:inherit; cursor:pointer; border:none; background:none; color:
 .piece{position:absolute; width:12.5%; height:12.5%; display:flex; align-items:center; justify-content:center;
   font-size:calc(var(--bs)/9.4); line-height:1; will-change:transform;
   transition:transform .24s cubic-bezier(.3,.85,.25,1), opacity .2s;}
+.piece .g{display:block; line-height:1; transform-origin:center; transition:transform .2s ease;}
 .piece.wp{color:var(--red); -webkit-text-stroke:calc(var(--bs)/300) var(--ink); text-shadow:0 calc(var(--bs)/240) 0 rgba(58,42,22,.4);}
 .piece.bp{color:var(--green); -webkit-text-stroke:calc(var(--bs)/300) var(--ink); text-shadow:0 calc(var(--bs)/240) 0 rgba(58,42,22,.4);}
-.piece.dragging{transition:none; z-index:30; filter:drop-shadow(0 8px 6px rgba(58,42,22,.5)) brightness(1.08);}
-.piece.captured{opacity:0; transform:scale(.2) rotate(20deg) !important;}
-.piece.placed{animation:place .26s ease;}
-@keyframes place{0%{transform:scale(1)}35%{transform:scale(1.22)}100%{transform:scale(1)}}
+.piece.dragging{transition:none; z-index:30;}
+.piece.dragging .g{filter:drop-shadow(0 8px 6px rgba(58,42,22,.5)) brightness(1.08); transform:scale(1.06);}
+.piece.captured{opacity:0;}
+.piece.captured .g{transform:scale(.25) rotate(18deg);}
+.piece.placed .g{animation:place .26s ease;}
+@keyframes place{0%{transform:scale(1)}35%{transform:scale(1.25)}100%{transform:scale(1)}}
 
 /* side / bottom panel */
 .panel{display:flex; flex-direction:column; gap:12px;}
@@ -516,11 +519,11 @@ function renderPieces(){
     if(!e){
       e=document.createElement('div');
       e.className='piece '+(p.c==='w'?'wp':'bp');
-      e.textContent=GLYPH[p.t];
-      piecesLayer.appendChild(e); pieceEls[p.id]=e;
+      e.innerHTML='<span class="g">'+GLYPH[p.t]+'</span>';
       e.style.transform='translate('+(p.col*100)+'%,'+(p.r*100)+'%)';
+      piecesLayer.appendChild(e); pieceEls[p.id]=e;
     }else{
-      e.textContent=GLYPH[p.t];
+      const g=e.querySelector('.g'); if(g)g.textContent=GLYPH[p.t]; else e.innerHTML='<span class="g">'+GLYPH[p.t]+'</span>';
       e.className='piece '+(p.c==='w'?'wp':'bp');
       e.style.transform='translate('+(p.col*100)+'%,'+(p.r*100)+'%)';
     }
